@@ -1,0 +1,222 @@
+% arara: xelatex: {shell: yes}
+% %arara: biber
+% %arara: xelatex: {shell: yes}
+% %arara: xelatex: {shell: yes}
+
+\documentclass[12pt]{article}
+
+\usepackage{hyperref} % гиперссылки
+
+\usepackage{tikz} % картинки в tikz
+\usetikzlibrary{arrows.meta} % tikz-прибамбас для рисовки стрелочек подлиннее
+
+\usepackage{microtype} % свешивание пунктуации
+
+\usepackage{array} % для столбцов фиксированной ширины
+
+\usepackage{indentfirst} % отступ в первом параграфе
+
+\usepackage{sectsty} % для центрирования названий частей
+\allsectionsfont{\centering}
+
+\usepackage{amsmath} % куча стандартных математических плюшек
+\usepackage{amssymb} % символы
+\usepackage{amsthm} % теоремки
+
+\usepackage{comment} % добавление длинных комментариев
+
+\usepackage[top=1cm, left=1.2cm, right=1.2cm, bottom=1cm]{geometry} % размер текста на странице
+
+\usepackage{lastpage} % чтобы узнать номер последней страницы
+
+\usepackage{enumitem} % дополнительные плюшки для списков
+%  например \begin{enumerate}[resume] позволяет продолжить нумерацию в новом списке
+
+\usepackage{caption} % что-то делает с подписями рисунков :)
+
+\usepackage{qcircuit} % для рисовки квантовых диаграмм
+\usepackage{physics} % бракеты
+
+\usepackage{answers} % разделение условий и ответов в упражнениях
+
+
+\usepackage{fancyhdr} % весёлые колонтитулы
+\pagestyle{empty}
+
+
+
+\usepackage{todonotes} % для вставки в документ заметок о том, что осталось сделать
+% \todo{Здесь надо коэффициенты исправить}
+% \missingfigure{Здесь будет Последний день Помпеи}
+% \listoftodos — печатает все поставленные \todo'шки
+
+
+
+\usepackage{booktabs} % красивые таблицы
+% заповеди из докупентации:
+% 1. Не используйте вертикальные линни
+% 2. Не используйте двойные линии
+% 3. Единицы измерения - в шапку таблицы
+% 4. Не сокращайте .1 вместо 0.1
+% 5. Повторяющееся значение повторяйте, а не говорите "то же"
+
+
+
+\usepackage{fontspec} % что-то про шрифты?
+\usepackage{polyglossia} % русификация xelatex
+
+\setmainlanguage{russian}
+\setotherlanguages{english}
+
+% download "Linux Libertine" fonts:
+% http://www.linuxlibertine.org/index.php?id=91&L=1
+\setmainfont{Linux Libertine O} % or Helvetica, Arial, Cambria
+% why do we need \newfontfamily:
+% http://tex.stackexchange.com/questions/91507/
+\newfontfamily{\cyrillicfonttt}{Linux Libertine O}
+
+\AddEnumerateCounter{\asbuk}{\russian@alph}{щ} % для списков с русскими буквами
+\setlist[enumerate, 2]{label=\asbuk*),ref=\asbuk*}
+
+%% эконометрические сокращения
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Arg}{Arg}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\newcommand \hVar{\widehat{\Var}}
+\newcommand \hCorr{\widehat{\Corr}}
+\newcommand \hCov{\widehat{\Cov}}
+\newcommand \cN{\mathcal{N}}
+\let\P\relax
+\DeclareMathOperator{\P}{\mathbb{P}}
+
+\usepackage{multicol}
+
+\usepackage[bibencoding = auto,
+backend = biber,
+sorting = none,
+style=alphabetic]{biblatex}
+
+\addbibresource{forecast_everything.bib}
+
+
+
+% делаем короче интервал в списках
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+
+
+
+
+\Newassociation{sol}{solution}{solution_file}
+% sol --- имя окружения внутри задач
+% solution --- имя окружения внутри solution_file
+% solution_file --- имя файла в который будет идти запись решений
+% можно изменить далее по ходу
+\Opensolutionfile{solution_file}[all_solutions]
+% в квадратных скобках фактическое имя файла
+
+% магия для автоматических гиперссылок задача-решение
+\newlist{myenum}{enumerate}{3}
+% \newcounter{problem}[chapter] % нумерация задач внутри глав
+\newcounter{problem}[section]
+
+\newenvironment{problem}%
+{%
+\refstepcounter{problem}%
+%  hyperlink to solution
+     \hypertarget{problem:{\thesection.\theproblem}}{} % нумерация внутри глав
+     % \hypertarget{problem:{\theproblem}}{}
+     \Writetofile{solution_file}{\protect\hypertarget{soln:\thesection.\theproblem}{}}
+     %\Writetofile{solution_file}{\protect\hypertarget{soln:\theproblem}{}}
+     \begin{myenum}[label=\bfseries\protect\hyperlink{soln:\thesection.\theproblem}{\thesection.\theproblem},ref=\thesection.\theproblem]
+     % \begin{myenum}[label=\bfseries\protect\hyperlink{soln:\theproblem}{\theproblem},ref=\theproblem]
+     \item%
+    }%
+    {%
+    \end{myenum}}
+% для гиперссылок обратно надо переопределять окружение
+% это происходит непосредственно перед подключением файла с решениями
+
+
+
+\theoremstyle{definition}
+\newtheorem{definition}{Определение}
+
+
+
+\begin{document}
+\begin{enumerate}
+    \item Города A и B соединены железной дорогой длиной 60 км. 
+    Поезда в обе стороны отправляются в каждый час одновременно, время в пути 1 час. 
+    Стрелочник, живущий около железной дороги, любит подойти к окну, 
+    дождаться первого проходящего мимо поезда и записать его направление. 
+    Поезда обоих направлений в его записях встречаются одинаково часто. 
+
+    \begin{enumerate}
+        \item На каком расстоянии от ближайшего города он живёт?
+        \item Сколько в среднем он ждёт поезда?
+    \end{enumerate}
+    
+    \item Аня хватается за верёвку в форме окружности в произвольной точке.
+    Боря берёт мачете и с завязанными глазами разрубает
+    верёвку в двух случайных независимых местах. Аня забирает себе тот кусок,
+    за который держится. Боря забирает оставшийся кусок. Вся верёвка имеет единичную длину.
+    \begin{enumerate}
+    \item Найдите вероятность того, что у Ани верёвка длиннее.
+    \item Чему равен ожидаемый длина куска верёвки, доставшегося Ане?
+    \end{enumerate}
+
+    \item Неуловимый Джо подбрасывает правильную монетку бесконечное количество раз. 
+    \begin{enumerate}
+        \item Какая комбинация скорее всего выпадет раньше $HH$ или $TTT$? $HTT$ или $TTH$?
+        \item Сколько бросков в среднем надо сделать до выпадения $HH$?
+    \end{enumerate}
+
+    \item В ювелирном магазине широко открыта дверь, а на открытой витрине лежат 150 колец и 420 кулончиков. 
+    Пока продавщица болтает по телефону проказница-сорока залетает в магазин хватает по одному украшению наугад и относит к себе в гнездо
+     до полного опустошения магазина.
+    
+    Какова вероятность того, что в какой-то момент времени кроме изначального в гнезде сороки колец будет столько же, сколько кулончиков?
+
+    \item Андрей Абрикосов, Борис Бананов и Вова Виноградов играют одной командой в игру.
+    В комнате три закрытых внешне неотличимых коробки: с абрикосами, бананами и виноградом.
+    Общаться после начала игры они не могут, но могут заранее договориться о стратегии.
+    Они заходят в комнату по очереди.
+    Каждый из них может открыть две коробки по своему выбору.
+    Перед следующим игроком коробки закрываются. Если Андрей откроет коробку абрикосами,
+    Борис — с бананами, а Вова — с виноградом, то они выигрывают.
+    Если хотя бы один из игроков не найдёт свой фрукт, то их команда проигрывает.
+    
+  Какова их оптимальная стратегия? А какова их наихудшая стратегия?
+
+  \item Злобный Дракон поймал принцесс Настю и Сашу и посадил в разные башни.
+  Перед каждой из принцесс Злобный Дракон подбрасывает один раз правильную монетку.
+  А дальше даёт каждой из них шанс угадать, как выпала монетка у её подруги.
+  Если хотя бы одна из принцесс угадает, то Злобный Дракон отпустит принцесс на волю.
+  Если обе принцессы ошибутся, то они навсегда останутся у него в заточении.
+  
+  Подобная практика у Злобного Дракона исследователями была отмечена уже давно,
+  поэтому принцессы имели достаточно времени договориться на случай вероятного похищения.
+  
+  Как следует поступать принцессам при подобных похищениях?
+
+  \item Маша и Саша играют в быстрые шахматы. У них одинаковый класс игры и
+  оба предпочитают играть белыми потому, что выигрывают белыми с вероятностью $0.7$.
+  В ничью они никогда не играют.
+
+  Партии играются до 10 побед. Первую партию Маша играет белыми.
+  
+  Она считает, что в следующей партии белыми должен играть тот,
+  кто выиграл предыдущую партию. Саша считает, что ходить белыми нужно по очереди.
+
+  При каком варианте правил у Маши больше шансы выиграть?
+    
+
+
+\end{enumerate}
+
+
+\end{document}
